@@ -1,4 +1,4 @@
-class RegistrationsController < ApplicationController
+class UsersRegistrationsController < ApplicationController
 
   def create
     user = User.create!(
@@ -10,12 +10,13 @@ class RegistrationsController < ApplicationController
     )
 
     if user
-      session[:user_id] = user.user_id
+      session[:user_id] = user.id
       render json: {
         status: :created,
         user: user
       }
     else
       render json: {status: 500}
+    end
   end
 end
