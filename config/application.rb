@@ -19,9 +19,12 @@ module AbilityAccountingApi
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
 
-    config.middleware.use ActionDispatch::Cookies
-    config.middleware.use ActionDispatch::Session::CookieStore
-    config.middleware.insert_after(ActionDispatch::Cookies, ActionDispatch::Session::CookieStore)
+    config.api_only = true
 
+    config.middleware.use ActionDispatch::Cookies
+    config.middleware.use ActionDispatch::Session::CookieStore, key: '_ability_app'
+    config.middleware.use ActionDispatch::Cookies
+    config.middleware.insert_after(ActionDispatch::Cookies, ActionDispatch::Session::CookieStore, key: '_your_app')
+    
   end
 end
