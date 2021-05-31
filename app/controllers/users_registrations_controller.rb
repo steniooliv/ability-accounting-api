@@ -19,4 +19,5 @@ class UsersRegistrationsController < ApplicationController
       render json: {status: 500}
     end
   end
+  
 end
