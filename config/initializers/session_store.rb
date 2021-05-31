@@ -4,7 +4,6 @@ if Rails.env == "production"
     :cookie_store,
     key: '_authentication_app',
     secure: Rails.env.production?,
-    httponly: true,
     domain: :all,
     expire_after: 14.days
 
