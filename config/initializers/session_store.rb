@@ -1,1 +1,1 @@
-Rails.application.config.session_store :cookie_store, key: '_ability-accounting-app', domain: :all
+Rails.application.config.session_store :cookie_store, key: '_ability-accounting-app', domain: 'ability-accounting-api.herokuapp.com'
