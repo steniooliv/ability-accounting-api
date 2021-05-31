@@ -22,9 +22,6 @@ module AbilityAccountingApi
     config.api_only = true
 
     config.middleware.use ActionDispatch::Cookies
-    config.middleware.use ActionDispatch::Session::CookieStore, key: '_ability_app'
-    config.middleware.use ActionDispatch::Cookies
-    config.middleware.insert_after(ActionDispatch::Cookies, ActionDispatch::Session::CookieStore, key: '_your_app')
-    
+    config.middleware.use ActionDispatch::Session::CookieStore
   end
 end
