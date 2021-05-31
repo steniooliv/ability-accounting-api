@@ -57,4 +57,4 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 gem 'rack-cors', :require => 'rack/cors'
 
-gem 'rails_same_site_cookie'
+gem 'rails_same_site_cookie', '~> 0.1.8'
