@@ -4,6 +4,8 @@ Rails.application.routes.draw do
     resources :users_registrations, only: [:create]
 
     resources :companies
+
+    get :invoices, to: "companies#invoices"
   
     delete :logout, to: "sessions#logout"
     get :logged_in, to: "sessions#logged_in"
