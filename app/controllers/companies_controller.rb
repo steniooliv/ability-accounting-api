@@ -23,7 +23,7 @@ class CompaniesController < ApplicationController
       @invoices = Invoice.all
       @invoices = @invoices.where(company_id: @current_company.id)
 
-      render json: {invoices: @invoices, @current_company}
+      render json: {invoices: @invoices, company: @current_company}
     else
       render json: {status: 404}
     end
