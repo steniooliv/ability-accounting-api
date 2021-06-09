@@ -15,15 +15,14 @@ class CompaniesController < ApplicationController
   def invoices
     if session[:user_id]
 
-      @companies = Company.all
-      @companies = @companies.where(accounting_id: @current_user.accounting_id);
+      @companies = Company.all.where(accounting_id: @current_user.accounting_id);
 
       @current_company = @companies.find(params['id'])
+      
+      @invoices = Invoice.all.where(company_id: @current_company.id)
+      
+      render json: {company: @current_company, invoices: @invoices.as_json(include: :customer)}
 
-      @invoices = Invoice.all
-      @invoices = @invoices.where(company_id: @current_company.id)
-
-      render json: {invoices: @invoices, company: @current_company}
     else
       render json: {status: 404}
     end
