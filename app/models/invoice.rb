@@ -2,6 +2,10 @@ class Invoice < ApplicationRecord
   belongs_to :company
   belongs_to :customer
 
-  has_one :companies
-  has_one :customers
+  validates :number, :serie, :total_value, presence: true
+
+  has_many :companies
+  has_many :customers
+
+  has_one_attached :invoice_xml
 end

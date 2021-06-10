@@ -1,6 +1,8 @@
 class Company < ApplicationRecord
   belongs_to :accounting
 
-  has_one :accountings
+  validates :name, presence: true
+
+  has_many :accountings
   has_many :invoices
 end

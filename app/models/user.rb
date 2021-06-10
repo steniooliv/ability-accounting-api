@@ -3,8 +3,10 @@ class User < ApplicationRecord
 
   has_secure_password
 
+  validates :name, :email, :password, :password_confirmation, presence: true
+
   validates_presence_of :email
   validates_uniqueness_of :email
 
-  has_one :accountings
+  has_many :accountings
 end
