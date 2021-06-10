@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+  devise_for :admin_users, ActiveAdmin::Devise.config
+  ActiveAdmin.routes(self)
+  
   scope "/api" do
     resources :sessions, only: [:create]
     resources :users_registrations, only: [:create]
