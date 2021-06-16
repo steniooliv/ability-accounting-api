@@ -1,5 +1,5 @@
 ActiveAdmin.register Company do
 
-  permit_params :name, :accounting_id
+  permit_params :name, :number, :accounting_id
   
 end
