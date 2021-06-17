@@ -21,7 +21,23 @@ class CompaniesController < ApplicationController
       
       @invoices = Invoice.all.where(company_id: @current_company.id)
 
-      render json: {company: @current_company, invoices: @invoices.as_json(include: :customer)}
+      if params['type'] === 'invoicein'
+        @invoices = @invoices.where(type_record: 'NFE')
+        @invoices = @invoices.where(type_movement: 'E')
+        render json: {company: @current_company, invoices: @invoices.as_json(include: :customer)}
+      end
+
+      if params['type'] === 'invoiceout'
+        @invoices = @invoices.where(type_record: 'NFE')
+        @invoices = @invoices.where(type_movement: 'S')
+        render json: {company: @current_company, invoices: @invoices.as_json(include: :customer)}
+      end
+
+      if params['type'] === 'taxcuponout'
+        @invoices = @invoices.where(type_record: 'NFCE')
+        @invoices = @invoices.where(type_movement: 'S')
+        render json: {company: @current_company, invoices: @invoices.as_json(include: :customer)}
+      end
 
     else
       render json: {status: 404}
