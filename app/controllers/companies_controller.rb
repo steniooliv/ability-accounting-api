@@ -21,6 +21,14 @@ class CompaniesController < ApplicationController
       
       @invoices = Invoice.all.where(company_id: @current_company.id)
 
+      start_params = params['start_date']
+      start_date = start_params.to_date
+      
+      end_params = params['end_date']
+      end_date = end_params.to_date
+
+      @invoices = @invoices.where(date_issue: start_date...end_date)
+
       if params['type'] === 'invoicein'
         @invoices = @invoices.where(type_record: 'NFE')
         @invoices = @invoices.where(type_movement: 'E')
