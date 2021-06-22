@@ -32,19 +32,25 @@ class CompaniesController < ApplicationController
       if params['type'] === 'invoicein'
         @invoices = @invoices.where(type_record: 'NFE')
         @invoices = @invoices.where(type_movement: 'E')
-        render json: {company: @current_company, invoices: @invoices.as_json(include: :customer)}
+        @invoice_products = InvoiceProduct.all.where(invoice_id: @invoices.ids)
+
+        render json: {company: @current_company, invoices: @invoices.as_json(include: :customer), products: @invoice_products}
       end
 
       if params['type'] === 'invoiceout'
         @invoices = @invoices.where(type_record: 'NFE')
         @invoices = @invoices.where(type_movement: 'S')
-        render json: {company: @current_company, invoices: @invoices.as_json(include: :customer)}
+        @invoice_products = InvoiceProduct.all.where(invoice_id: @invoices.ids)
+
+        render json: {company: @current_company, invoices: @invoices.as_json(include: :customer), products: @invoice_products}
       end
 
       if params['type'] === 'taxcuponout'
         @invoices = @invoices.where(type_record: 'NFCE')
         @invoices = @invoices.where(type_movement: 'S')
-        render json: {company: @current_company, invoices: @invoices.as_json(include: :customer)}
+        @invoice_products = InvoiceProduct.all.where(invoice_id: @invoices.ids)
+
+        render json: {company: @current_company, invoices: @invoices.as_json(include: :customer), products: @invoice_products}
       end
 
     else
@@ -55,9 +61,139 @@ class CompaniesController < ApplicationController
   def invoice_products
     if session[:user_id]
 
-      @invoice_products = InvoiceProduct.all
+      @companies = Company.all.where(accounting_id: @current_user.accounting_id);
 
-      render json: {invoice_products: @invoice_products}
+      @current_company = @companies.find(params['id'])
+      
+      @invoices = Invoice.all.where(company_id: @current_company.id)
+
+      start_params = params['start_date']
+      start_date = start_params.to_date
+      
+      end_params = params['end_date']
+      end_date = end_params.to_date
+
+      @invoices = @invoices.where(date_issue: start_date...end_date)
+
+      if params['type'] === 'invoicein'
+        @invoices = @invoices.where(type_record: 'NFE')
+        @invoices = @invoices.where(type_movement: 'E')
+      end
+
+      if params['type'] === 'invoiceout'
+        @invoices = @invoices.where(type_record: 'NFE')
+        @invoices = @invoices.where(type_movement: 'S')
+      end
+
+      if params['type'] === 'taxcuponout'
+        @invoices = @invoices.where(type_record: 'NFCE')
+        @invoices = @invoices.where(type_movement: 'S')
+      end
+
+      @invoice_products = InvoiceProduct.all.where(invoice_id: @invoices.ids)
+
+      @cfop_products = @invoice_products
+                            .order(cfop: :asc)
+                            .group(:cfop)
+                            .select(:cfop,
+                              "SUM(price_total) + SUM(expenses_value) + SUM(shipping_value) + SUM(safe_value) as total_accounting",
+                              "SUM(icms_base) as total_icms_base",
+                              "SUM(icms_value) as total_icms_value",
+                              "SUM(icms_free_value) as total_icms_free_value",
+                              "SUM(icms_other_value) as total_icms_other_value"
+                            )
+                            .collect{
+                                |invoice_products| {
+                                  cfop: invoice_products.cfop,
+                                  total_accounting: invoice_products.total_accounting,
+                                  total_icms_base: invoice_products.total_icms_base,
+                                  total_icms_value: invoice_products.total_icms_value,
+                                  total_icms_free_value: invoice_products.total_icms_free_value,
+                                  total_icms_other_value: invoice_products.total_icms_other_value
+                                }
+                            }
+
+      render json: {cfop_products: @cfop_products, products: @invoice_products}
+
+    else
+      render json: {status: 404}
+    end
+  end
+
+  def pis_cofins
+    if session[:user_id]
+
+      @companies = Company.all.where(accounting_id: @current_user.accounting_id);
+
+      @current_company = @companies.find(params['id'])
+      
+      @invoices = Invoice.all.where(company_id: @current_company.id)
+
+      start_params = params['start_date']
+      start_date = start_params.to_date
+      
+      end_params = params['end_date']
+      end_date = end_params.to_date
+
+      @invoices = @invoices.where(date_issue: start_date...end_date)
+
+      if params['type'] === 'invoicein'
+        @invoices = @invoices.where(type_record: 'NFE')
+        @invoices = @invoices.where(type_movement: 'E')
+      end
+
+      if params['type'] === 'invoiceout'
+        @invoices = @invoices.where(type_record: 'NFE')
+        @invoices = @invoices.where(type_movement: 'S')
+      end
+
+      if params['type'] === 'taxcuponout'
+        @invoices = @invoices.where(type_record: 'NFCE')
+        @invoices = @invoices.where(type_movement: 'S')
+      end
+
+      @invoice_products = InvoiceProduct.all.where(invoice_id: @invoices.ids)
+
+      if params['check'] === 'PIS'
+        @pis_products = @invoice_products
+                              .order(pis_cst: :asc)
+                              .group(:pis_cst)
+                              .select(:pis_cst,
+                                "SUM(price_total) + SUM(expenses_value) + SUM(shipping_value) + SUM(safe_value) as total_accounting",
+                                "SUM(pis_base) as total_pis_base",
+                                "SUM(pis_value) as total_pis_value",
+                              )
+                              .collect{
+                                  |invoice_products| {
+                                    pis_cst: invoice_products.pis_cst,
+                                    total_accounting: invoice_products.total_accounting,
+                                    total_pis_base: invoice_products.total_pis_base,
+                                    total_pis_value: invoice_products.total_pis_value,
+                                  }
+                              }
+        render json: {pis_products: @pis_products}
+
+      end
+
+      if params['check'] === 'COFINS'
+        @cofins_products = @invoice_products
+                              .order(cofins_cst: :asc)
+                              .group(:cofins_cst)
+                              .select(:cofins_cst,
+                                "SUM(price_total) + SUM(expenses_value) + SUM(shipping_value) + SUM(safe_value) as total_accounting",
+                                "SUM(cofins_base) as total_cofins_base",
+                                "SUM(cofins_value) as total_cofins_value",
+                              )
+                              .collect{
+                                  |invoice_products| {
+                                    cofins_cst: invoice_products.cofins_cst,
+                                    total_accounting: invoice_products.total_accounting,
+                                    total_cofins_base: invoice_products.total_cofins_base,
+                                    total_cofins_value: invoice_products.total_cofins_value,
+                                  }
+                              }
+        render json: {cofins_products: @cofins_products}
+      end
 
     else
       render json: {status: 404}
