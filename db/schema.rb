@@ -127,6 +127,8 @@ ActiveRecord::Schema.define(version: 2021_06_12_142156) do
     t.string "ncm"
     t.string "cfop"
     t.string "cest"
+    t.float "icms_free_value"
+    t.float "icms_other_value"
     t.index ["invoice_id"], name: "index_invoice_products_on_invoice_id"
   end
 
