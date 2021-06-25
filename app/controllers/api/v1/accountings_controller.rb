@@ -4,7 +4,7 @@ class Api::V1::AccountingsController < ApplicationController
   #GET /api/v1/accountings
   def index
 
-    if request.headers["token"] == "123"
+    if request.headers["token"] == ENV['API_TOKEN']
       accounting = Accounting.all
       render json: {accountings: accounting}
     else
@@ -17,7 +17,7 @@ class Api::V1::AccountingsController < ApplicationController
   #GET /api/v1/accountings/:id
   def show
 
-    if request.headers["token"] == "123"
+    if request.headers["token"] == ENV['API_TOKEN']
 
       if Accounting.where(id: params[:id]).present?
         accounting = Accounting.find(params[:id])
@@ -36,7 +36,7 @@ class Api::V1::AccountingsController < ApplicationController
   #POST //api/v1/accountings
   def create
 
-    if request.headers["token"] == "123"
+    if request.headers["token"] == ENV['API_TOKEN']
       
       accounting = Accounting.create!(
         name: params["accounting"]["name"],
@@ -61,7 +61,7 @@ class Api::V1::AccountingsController < ApplicationController
   #PUT //api/v1/accountings/:id
   def update
 
-    if request.headers["token"] == "123"
+    if request.headers["token"] == ENV['API_TOKEN']
 
       if Accounting.where(id: params[:id]).present?
         accounting = Accounting.find(params[:id])
@@ -81,7 +81,7 @@ class Api::V1::AccountingsController < ApplicationController
   #DELETE /api/v1/accountings/:id
   def destroy
 
-    if request.headers["token"] == "123"
+    if request.headers["token"] == ENV['API_TOKEN']
 
       if Accounting.where(id: params[:id]).present?
         accounting = Accounting.find(params[:id])

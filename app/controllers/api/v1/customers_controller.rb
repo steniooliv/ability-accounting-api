@@ -4,7 +4,7 @@ class Api::V1::CustomersController < ApplicationController
   #GET /api/v1/customers
   def index
 
-    if request.headers["token"] == "123"
+    if request.headers["token"] == ENV['API_TOKEN']
       customers = Customer.all
       render json: {customers: customers}
     else
@@ -17,7 +17,7 @@ class Api::V1::CustomersController < ApplicationController
   #GET /api/v1/customers/:id
   def show
 
-    if request.headers["token"] == "123"
+    if request.headers["token"] == ENV['API_TOKEN']
 
       if Customer.where(id: params[:id]).present?
         customer = Customer.find(params[:id])
@@ -36,7 +36,7 @@ class Api::V1::CustomersController < ApplicationController
   #POST /api/v1/customers
   def create
 
-    if request.headers["token"] == "123"
+    if request.headers["token"] == ENV['API_TOKEN']
 
       customer = Customer.create!(
         name: params["customer"]["name"],
@@ -62,7 +62,7 @@ class Api::V1::CustomersController < ApplicationController
   #PUT /api/v1/customers/:id
   def update
 
-    if request.headers["token"] == "123"
+    if request.headers["token"] == ENV['API_TOKEN']
 
       if Customer.where(id: params[:id]).present?
         customer = Customer.find(params[:id])
@@ -82,7 +82,7 @@ class Api::V1::CustomersController < ApplicationController
   #DELETE /api/v1/customers/:id
   def destroy
 
-    if request.headers["token"] == "123"
+    if request.headers["token"] == ENV['API_TOKEN']
 
       if Customer.where(id: params[:id]).present?
         customer = Customer.find(params[:id])

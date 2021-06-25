@@ -6,7 +6,7 @@ class Api::V1::ProductsController < ApplicationController
   #GET /api/v1/invoices/:id/products
   def index
 
-    if request.headers["token"] == "123"
+    if request.headers["token"] == ENV['API_TOKEN']
       products = InvoiceProduct.all.where(invoice_id: @invoice.id)
       render json: {products: products}
     else
@@ -20,7 +20,7 @@ class Api::V1::ProductsController < ApplicationController
   #GET /api/v1/invoices/:id/products/id:
   def show
     
-    if request.headers["token"] == "123"
+    if request.headers["token"] == ENV['API_TOKEN']
       products = InvoiceProduct.all.where(invoice_id: @invoice.id)
 
       if products.where(id: params[:id]).present?
@@ -40,7 +40,7 @@ class Api::V1::ProductsController < ApplicationController
   #GET /api/v1/invoices/:id/products
   def create
 
-    if request.headers["token"] == "123"
+    if request.headers["token"] == ENV['API_TOKEN']
       
       product = InvoiceProduct.create!(
         product_id: params["product"]["product_id"],
@@ -92,7 +92,7 @@ class Api::V1::ProductsController < ApplicationController
   #GET /api/v1/invoices/:id/products/:id
   def update
 
-    if request.headers["token"] == "123"
+    if request.headers["token"] == ENV['API_TOKEN']
       products = InvoiceProduct.all.where(invoice_id: @invoice.id)
 
       if products.where(id: params[:id]).present?
@@ -113,7 +113,7 @@ class Api::V1::ProductsController < ApplicationController
   #GET /api/v1/invoices/:id/products/:id
   def destroy
 
-    if request.headers["token"] == "123"
+    if request.headers["token"] == ENV['API_TOKEN']
       products = InvoiceProduct.all.where(invoice_id: @invoice.id)
 
       if products.where(id: params[:id]).present?
