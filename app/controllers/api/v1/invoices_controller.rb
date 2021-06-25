@@ -4,7 +4,7 @@ class Api::V1::InvoicesController < ApplicationController
   #GET /api/v1/invoices
   def index
 
-    if request.headers["token"] == "123"
+    if request.headers["token"] == ENV['API_TOKEN']
       invoices = Invoice.all
       render json: {invoices: invoices}
     else
@@ -17,7 +17,7 @@ class Api::V1::InvoicesController < ApplicationController
   #GET /api/v1/invoices/:id
   def show
 
-    if request.headers["token"] == "123"
+    if request.headers["token"] == ENV['API_TOKEN']
 
       if Invoice.where(id: params[:id]).present?
         invoice = Invoice.find(params[:id])
@@ -36,7 +36,7 @@ class Api::V1::InvoicesController < ApplicationController
   #POST /api/v1/invoices
   def create
 
-    if request.headers["token"] == "123"
+    if request.headers["token"] == ENV['API_TOKEN']
 
       invoice = Invoice.create!(
         number: params["invoice"]["number"],
@@ -86,7 +86,7 @@ class Api::V1::InvoicesController < ApplicationController
   #PUT /api/v1/invoices/:id
   def update
 
-    if request.headers["token"] == "123"
+    if request.headers["token"] == ENV['API_TOKEN']
 
       if Invoice.where(id: params[:id]).present?
         invoice = Invoice.find(params[:id])
@@ -106,7 +106,7 @@ class Api::V1::InvoicesController < ApplicationController
   #DELETE /api/v1/invoices/:id
   def destroy
 
-    if request.headers["token"] == "123"
+    if request.headers["token"] == ENV['API_TOKEN']
 
       if Invoice.where(id: params[:id]).present?
         invoice = Invoice.find(params[:id])

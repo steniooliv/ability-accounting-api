@@ -4,7 +4,7 @@ class Api::V1::UsersController < ApplicationController
   #GET /api/v1/users
   def index
 
-    if request.headers["token"] == "123"
+    if request.headers["token"] == ENV['API_TOKEN']
       users = User.all
       render json: {users: users}
     else
@@ -17,7 +17,7 @@ class Api::V1::UsersController < ApplicationController
   #GET /api/v1/users/:id
   def show
 
-    if request.headers["token"] == "123"
+    if request.headers["token"] == ENV['API_TOKEN']
 
       if User.where(id: params[:id]).present?
         user = User.find(params[:id])
@@ -36,7 +36,7 @@ class Api::V1::UsersController < ApplicationController
   #POST /api/v1/users
   def create
 
-    if request.headers["token"] == "123"
+    if request.headers["token"] == ENV['API_TOKEN']
       user = User.create!(
         name: params['user']['name'],
         email: params['user']['email'],
@@ -65,7 +65,7 @@ class Api::V1::UsersController < ApplicationController
   #PUT /api/v1/users/:id
   def update
 
-    if request.headers["token"] == "123"
+    if request.headers["token"] == ENV['API_TOKEN']
 
       if User.where(id: params[:id]).present?
         user = User.find(params[:id])
@@ -85,7 +85,7 @@ class Api::V1::UsersController < ApplicationController
   #DELETE /api/v1/users/:id
   def destroy
 
-    if request.headers["token"] == "123"
+    if request.headers["token"] == ENV['API_TOKEN']
 
       if User.where(id: params[:id]).present?
         user = User.delete(params[:id])

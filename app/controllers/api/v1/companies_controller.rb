@@ -4,7 +4,7 @@ class Api::V1::CompaniesController < ApplicationController
   #GET /api/v1/companies
   def index
 
-    if request.headers["token"] == "123"
+    if request.headers["token"] == ENV['API_TOKEN']
       companies = Company.all
       render json: {companies: companies}
     else
@@ -17,7 +17,7 @@ class Api::V1::CompaniesController < ApplicationController
   #GET /api/v1/companies/:id
   def show
 
-    if request.headers["token"] == "123"
+    if request.headers["token"] == ENV['API_TOKEN']
 
       if Company.where(id: params[:id]).present?
         company = Company.find(params[:id])
@@ -36,7 +36,7 @@ class Api::V1::CompaniesController < ApplicationController
   #POST /api/v1/companies
   def create
 
-    if request.headers["token"] == "123"
+    if request.headers["token"] == ENV['API_TOKEN']
 
       company = Company.create!(
         name: params["company"]["name"],
@@ -63,7 +63,7 @@ class Api::V1::CompaniesController < ApplicationController
   #PUT /api/v1/companies/:id
   def update
 
-    if request.headers["token"] == "123"
+    if request.headers["token"] == ENV['API_TOKEN']
 
       if Company.where(id: params[:id]).present?
         company = Company.find(params[:id])
@@ -83,7 +83,7 @@ class Api::V1::CompaniesController < ApplicationController
   #DELETE /api/v1/companies/:id
   def destroy
 
-    if request.headers["token"] == "123"
+    if request.headers["token"] == ENV['API_TOKEN']
 
       if Company.where(id: params[:id]).present?
         company = Company.find(params[:id])
