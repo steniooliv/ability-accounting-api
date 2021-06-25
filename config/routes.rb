@@ -4,8 +4,7 @@ Rails.application.routes.draw do
   
   scope "/api" do
     resources :sessions, only: [:create]
-    resources :users_registrations, only: [:create]
-
+    
     resources :companies
 
     get :invoices, to: "companies#invoices"
@@ -17,4 +16,17 @@ Rails.application.routes.draw do
   
     root to: "static#home"
   end
+
+  namespace :api do
+    namespace :v1 do
+      resources :users
+      resources :accountings
+      resources :companies
+      resources :customers
+      resources :invoices do
+        resources :products
+      end
+    end
+  end
+  
 end
