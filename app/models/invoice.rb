@@ -8,7 +8,6 @@ class Invoice < ApplicationRecord
 
   has_many :companies
   has_many :customers
-  has_many :invoice_products
+  has_many :invoice_products, dependent: :destroy
 
-  has_one_attached :invoice_xml
 end

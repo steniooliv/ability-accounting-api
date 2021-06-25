@@ -4,5 +4,5 @@ class Company < ApplicationRecord
   validates :name, :number, presence: true
 
   has_many :accountings
-  has_many :invoices
+  has_many :invoices, dependent: :destroy
 end
