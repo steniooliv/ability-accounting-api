@@ -96,7 +96,7 @@ class CompaniesController < ApplicationController
                             .order(cfop: :asc)
                             .group(:cfop)
                             .select(:cfop,
-                              "SUM(price_total) + SUM(expenses_value) + SUM(shipping_value) + SUM(safe_value) as total_accounting",
+                              "SUM(price_total) + SUM(expenses_value) + SUM(shipping_value) + SUM(safe_value) + SUM(sticms_value) - SUM(discount_value) as total_accounting",
                               "SUM(icms_base) as total_icms_base",
                               "SUM(icms_value) as total_icms_value",
                               "SUM(icms_free_value) as total_icms_free_value",
