@@ -33,6 +33,7 @@ class CompaniesController < ApplicationController
         @invoices = @invoices.where(type_record: 'NFE')
         @invoices = @invoices.where(type_movement: 'E')
         @invoice_products = InvoiceProduct.all.where(invoice_id: @invoices.ids)
+        @invoices = @invoices.order(number: :asc)
 
         render json: {company: @current_company, invoices: @invoices.as_json(include: :customer), products: @invoice_products}
       end
@@ -41,6 +42,7 @@ class CompaniesController < ApplicationController
         @invoices = @invoices.where(type_record: 'NFE')
         @invoices = @invoices.where(type_movement: 'S')
         @invoice_products = InvoiceProduct.all.where(invoice_id: @invoices.ids)
+        @invoices = @invoices.order(number: :asc)
 
         render json: {company: @current_company, invoices: @invoices.as_json(include: :customer), products: @invoice_products}
       end
@@ -49,6 +51,7 @@ class CompaniesController < ApplicationController
         @invoices = @invoices.where(type_record: 'NFCE')
         @invoices = @invoices.where(type_movement: 'S')
         @invoice_products = InvoiceProduct.all.where(invoice_id: @invoices.ids)
+        @invoices = @invoices.order(number: :asc)
 
         render json: {company: @current_company, invoices: @invoices.as_json(include: :customer), products: @invoice_products}
       end
@@ -93,17 +96,19 @@ class CompaniesController < ApplicationController
       @invoice_products = InvoiceProduct.all.where(invoice_id: @invoices.ids)
 
       @cfop_products = @invoice_products
-                            .order(cfop: :asc)
-                            .group(:cfop)
-                            .select(:cfop,
+                            .order(icms_cst_csosn: :asc)
+                            .group(:icms_cst_csosn, :cfop)
+                            .select(:icms_cst_csosn,
                               "SUM(price_total) + SUM(expenses_value) + SUM(shipping_value) + SUM(safe_value) + SUM(sticms_value) - SUM(discount_value) as total_accounting",
                               "SUM(icms_base) as total_icms_base",
                               "SUM(icms_value) as total_icms_value",
                               "SUM(icms_free_value) as total_icms_free_value",
-                              "SUM(icms_other_value) as total_icms_other_value"
+                              "SUM(icms_other_value) as total_icms_other_value",
+                              :cfop
                             )
                             .collect{
                                 |invoice_products| {
+                                  icms_cst_csosn: invoice_products.icms_cst_csosn,
                                   cfop: invoice_products.cfop,
                                   total_accounting: invoice_products.total_accounting,
                                   total_icms_base: invoice_products.total_icms_base,
