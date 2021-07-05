@@ -96,7 +96,7 @@ class CompaniesController < ApplicationController
       @invoice_products = InvoiceProduct.all.where(invoice_id: @invoices.ids)
 
       @cfop_products = @invoice_products
-                            .order(icms_cst_csosn: :asc)
+                            .order(icms_cst_csosn: :asc, cfop: :asc)
                             .group(:icms_cst_csosn, :cfop)
                             .select(:icms_cst_csosn,
                               "SUM(price_total) + SUM(expenses_value) + SUM(shipping_value) + SUM(safe_value) + SUM(sticms_value) - SUM(discount_value) as total_accounting",
