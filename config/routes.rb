@@ -1,6 +1,4 @@
 Rails.application.routes.draw do
-  devise_for :admin_users, ActiveAdmin::Devise.config
-  ActiveAdmin.routes(self)
   
   scope "/api" do
     resources :sessions, only: [:create]
@@ -13,20 +11,24 @@ Rails.application.routes.draw do
   
     delete :logout, to: "sessions#logout"
     get :logged_in, to: "sessions#logged_in"
-  
-    root to: "static#home"
   end
 
   namespace :api do
+    
     namespace :v1 do
+      
       resources :users
       resources :accountings
       resources :companies
       resources :customers
+      
       resources :invoices do
         resources :products
       end
+
+      root to: "static#home"
     end
+
   end
-  
+
 end
