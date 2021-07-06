@@ -8,6 +8,7 @@ Rails.application.routes.draw do
     get :invoices, to: "companies#invoices"
     get :invoice_products, to: "companies#invoice_products"
     get :pis_cofins, to: "companies#pis_cofins"
+    get :cfop_products, to: "companies#cfop_products"
   
     delete :logout, to: "sessions#logout"
     get :logged_in, to: "sessions#logged_in"

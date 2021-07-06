@@ -1,4 +1,6 @@
 class CompaniesController < ApplicationController
+
+  require 'json'
   
   include CurrentUserConcern
 
@@ -33,6 +35,7 @@ class CompaniesController < ApplicationController
         @invoices = @invoices.where(type_record: 'NFE')
         @invoices = @invoices.where(type_movement: 'E')
         @invoice_products = InvoiceProduct.all.where(invoice_id: @invoices.ids)
+        
         @invoices = @invoices.order(number: :asc)
 
         render json: {company: @current_company, invoices: @invoices.as_json(include: :customer), products: @invoice_products}
@@ -42,6 +45,7 @@ class CompaniesController < ApplicationController
         @invoices = @invoices.where(type_record: 'NFE')
         @invoices = @invoices.where(type_movement: 'S')
         @invoice_products = InvoiceProduct.all.where(invoice_id: @invoices.ids)
+
         @invoices = @invoices.order(number: :asc)
 
         render json: {company: @current_company, invoices: @invoices.as_json(include: :customer), products: @invoice_products}
@@ -51,6 +55,7 @@ class CompaniesController < ApplicationController
         @invoices = @invoices.where(type_record: 'NFCE')
         @invoices = @invoices.where(type_movement: 'S')
         @invoice_products = InvoiceProduct.all.where(invoice_id: @invoices.ids)
+
         @invoices = @invoices.order(number: :asc)
 
         render json: {company: @current_company, invoices: @invoices.as_json(include: :customer), products: @invoice_products}
@@ -99,7 +104,7 @@ class CompaniesController < ApplicationController
                             .order(icms_cst_csosn: :asc, cfop: :asc)
                             .group(:icms_cst_csosn, :cfop)
                             .select(:icms_cst_csosn,
-                              "SUM(price_total) + SUM(expenses_value) + SUM(shipping_value) + SUM(safe_value) + SUM(sticms_value) - SUM(discount_value) as total_accounting",
+                              "SUM(price_total) + SUM(ipi_value) + SUM(expenses_value) + SUM(shipping_value) + SUM(safe_value) + SUM(sticms_value) - SUM(discount_value) as total_accounting",
                               "SUM(icms_base) as total_icms_base",
                               "SUM(icms_value) as total_icms_value",
                               "SUM(icms_free_value) as total_icms_free_value",
@@ -204,5 +209,37 @@ class CompaniesController < ApplicationController
       render json: {status: 404}
     end
   end
-  
+
+  def cfop_products
+    if session[:user_id]
+      invoice_id = params['invoice_id']
+     
+      @invoice_products = InvoiceProduct.all.where(invoice_id: invoice_id)
+
+      @cfop_products = @invoice_products
+                              .order(icms_cst_csosn: :asc, cfop: :asc)
+                              .group(:icms_cst_csosn, :cfop)
+                              .select(:icms_cst_csosn,
+                                "SUM(price_total) + SUM(ipi_value) + SUM(expenses_value) + SUM(shipping_value) + SUM(safe_value) + SUM(sticms_value) - SUM(discount_value) as total_accounting",
+                                "SUM(icms_base) as total_icms_base",
+                                "SUM(icms_value) as total_icms_value",
+                                "SUM(icms_free_value) as total_icms_free_value",
+                                "SUM(icms_other_value) as total_icms_other_value",
+                                :cfop
+                              )
+                              .collect{
+                                  |invoice_products| {
+                                    icms_cst_csosn: invoice_products.icms_cst_csosn,
+                                    cfop: invoice_products.cfop,
+                                    total_accounting: invoice_products.total_accounting,
+                                    total_icms_base: invoice_products.total_icms_base,
+                                    total_icms_value: invoice_products.total_icms_value,
+                                    total_icms_free_value: invoice_products.total_icms_free_value,
+                                    total_icms_other_value: invoice_products.total_icms_other_value
+                                  }
+                              }
+      render json: @cfop_products
+    end
+  end
+
 end
