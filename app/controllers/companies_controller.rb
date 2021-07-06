@@ -29,34 +29,35 @@ class CompaniesController < ApplicationController
       end_params = params['end_date']
       end_date = end_params.to_date
 
-      @invoices = @invoices.where(date_issue: start_date...end_date)
-
       if params['type'] === 'invoicein'
+        @invoices = @invoices.where(date_departure: start_date...end_date)
         @invoices = @invoices.where(type_record: 'NFE')
         @invoices = @invoices.where(type_movement: 'E')
         @invoice_products = InvoiceProduct.all.where(invoice_id: @invoices.ids)
         
-        @invoices = @invoices.order(number: :asc)
+        @invoices = @invoices.order(date_departure: :asc, date_issue: :asc)
 
         render json: {company: @current_company, invoices: @invoices.as_json(include: :customer), products: @invoice_products}
       end
 
       if params['type'] === 'invoiceout'
+        @invoices = @invoices.where(date_issue: start_date...end_date)
         @invoices = @invoices.where(type_record: 'NFE')
         @invoices = @invoices.where(type_movement: 'S')
         @invoice_products = InvoiceProduct.all.where(invoice_id: @invoices.ids)
 
-        @invoices = @invoices.order(number: :asc)
+        @invoices = @invoices.order(date_issue: :asc, date_departure: :asc)
 
         render json: {company: @current_company, invoices: @invoices.as_json(include: :customer), products: @invoice_products}
       end
 
       if params['type'] === 'taxcuponout'
+        @invoices = @invoices.where(date_issue: start_date...end_date)
         @invoices = @invoices.where(type_record: 'NFCE')
         @invoices = @invoices.where(type_movement: 'S')
         @invoice_products = InvoiceProduct.all.where(invoice_id: @invoices.ids)
 
-        @invoices = @invoices.order(number: :asc)
+        @invoices = @invoices.order(date_issue: :asc, date_departure: :asc)
 
         render json: {company: @current_company, invoices: @invoices.as_json(include: :customer), products: @invoice_products}
       end
@@ -81,21 +82,35 @@ class CompaniesController < ApplicationController
       end_params = params['end_date']
       end_date = end_params.to_date
 
-      @invoices = @invoices.where(date_issue: start_date...end_date)
 
       if params['type'] === 'invoicein'
+        @invoices = @invoices.where(date_departure: start_date...end_date)
+
         @invoices = @invoices.where(type_record: 'NFE')
         @invoices = @invoices.where(type_movement: 'E')
+
+        @invoices = @invoices.order(date_departure: :asc)
+
       end
 
       if params['type'] === 'invoiceout'
+        @invoices = @invoices.where(date_issue: start_date...end_date)
+
         @invoices = @invoices.where(type_record: 'NFE')
         @invoices = @invoices.where(type_movement: 'S')
+
+        @invoices = @invoices.order(date_issue: :asc)
+
       end
 
       if params['type'] === 'taxcuponout'
+        @invoices = @invoices.where(date_issue: start_date...end_date)
+
         @invoices = @invoices.where(type_record: 'NFCE')
         @invoices = @invoices.where(type_movement: 'S')
+
+        @invoices = @invoices.order(date_issue: :asc)
+
       end
 
       @invoice_products = InvoiceProduct.all.where(invoice_id: @invoices.ids)
@@ -145,19 +160,24 @@ class CompaniesController < ApplicationController
       end_params = params['end_date']
       end_date = end_params.to_date
 
-      @invoices = @invoices.where(date_issue: start_date...end_date)
 
       if params['type'] === 'invoicein'
+        @invoices = @invoices.where(date_departure: start_date...end_date)
+
         @invoices = @invoices.where(type_record: 'NFE')
         @invoices = @invoices.where(type_movement: 'E')
       end
 
       if params['type'] === 'invoiceout'
+        @invoices = @invoices.where(date_issue: start_date...end_date)
+
         @invoices = @invoices.where(type_record: 'NFE')
         @invoices = @invoices.where(type_movement: 'S')
       end
 
       if params['type'] === 'taxcuponout'
+        @invoices = @invoices.where(date_issue: start_date...end_date)
+
         @invoices = @invoices.where(type_record: 'NFCE')
         @invoices = @invoices.where(type_movement: 'S')
       end
