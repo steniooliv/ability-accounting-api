@@ -42,6 +42,7 @@ class Api::V1::InvoicesController < ApplicationController
         number: params["invoice"]["number"],
         serie: params["invoice"]["serie"],
         model: params["invoice"]["model"],
+        status: params["invoice"]["status"],
         type_record: params["invoice"]["type_record"],
         type_movement: params["invoice"]["type_movement"],
         date_issue: params["invoice"]["date_issue"],
@@ -90,7 +91,7 @@ class Api::V1::InvoicesController < ApplicationController
 
       if Invoice.where(id: params[:id]).present?
         invoice = Invoice.find(params[:id])
-        invoice.update!(params.require(:invoice).permit(:number, :serie, :model, :type_record, :type_movement, :date_issue, :date_departure, :access_key, :total_product, :discount_value, :expenses_value, :shipping_value, :safe_value, :icms_base, :icms_value, :sticms_base, :sticms_value, :ipi_base, :ipi_value, :pis_base, :pis_value, :cofins_base, :cofins_value, :invoice_value, :customer_id, :company_id))
+        invoice.update!(params.require(:invoice).permit(:number, :serie, :model, :status, :type_record, :type_movement, :date_issue, :date_departure, :access_key, :total_product, :discount_value, :expenses_value, :shipping_value, :safe_value, :icms_base, :icms_value, :sticms_base, :sticms_value, :ipi_base, :ipi_value, :pis_base, :pis_value, :cofins_base, :cofins_value, :invoice_value, :customer_id, :company_id))
         render json: {invoice: invoice}
       else
         render json: {status: 410, description: "ID not found!"}
