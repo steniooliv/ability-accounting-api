@@ -138,7 +138,25 @@ class CompaniesController < ApplicationController
                                 }
                             }
 
-      render json: {cfop_products: @cfop_products, products: @invoice_products}
+      @cfop_total_values = @invoice_products
+                              .select(
+                                "SUM(price_total) + SUM(ipi_value) + SUM(expenses_value) + SUM(shipping_value) + SUM(safe_value) + SUM(sticms_value) - SUM(discount_value) as total_total_accounting",
+                                "SUM(icms_base) as total_total_icms_base",
+                                "SUM(icms_value) as total_total_icms_value",
+                                "SUM(icms_free_value) as total_total_icms_free_value",
+                                "SUM(icms_other_value) as total_total_icms_other_value"
+                              )
+                              .collect {
+                                |cfop_total| { 
+                                  total_total_accounting: cfop_total.total_total_accounting,
+                                  total_total_icms_base: cfop_total.total_total_icms_base,
+                                  total_total_icms_value: cfop_total.total_total_icms_value,
+                                  total_total_icms_free_value: cfop_total.total_total_icms_free_value,
+                                  total_total_icms_other_value: cfop_total.total_total_icms_other_value
+                                }
+                              }
+
+      render json: {cfop_products: @cfop_products, products: @invoice_products, cfop_total: @cfop_total_values}
 
     else
       render json: {status: 404}
