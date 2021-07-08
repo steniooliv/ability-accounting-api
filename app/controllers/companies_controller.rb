@@ -219,7 +219,22 @@ class CompaniesController < ApplicationController
                                     total_pis_value: invoice_products.total_pis_value,
                                   }
                               }
-        render json: {pis_products: @pis_products}
+
+        @pis_total_values = @invoice_products
+                              .select(
+                                "SUM(price_total) + SUM(expenses_value) + SUM(shipping_value) + SUM(safe_value) as total_total_accounting",
+                                "SUM(pis_base) as total_total_pis_base",
+                                "SUM(pis_value) as total_total_pis_value",
+                              )
+                              .collect {
+                                |pis_total| { 
+                                  total_total_accounting: pis_total.total_total_accounting,
+                                  total_total_pis_base: pis_total.total_total_pis_base,
+                                  total_total_pis_value: pis_total.total_total_pis_value,
+                                }
+                              }
+
+        render json: {pis_products: @pis_products, pis_total: @pis_total_values}
 
       end
 
@@ -240,7 +255,21 @@ class CompaniesController < ApplicationController
                                     total_cofins_value: invoice_products.total_cofins_value,
                                   }
                               }
-        render json: {cofins_products: @cofins_products}
+        @cofins_total_values = @invoice_products
+                              .select(
+                                "SUM(price_total) + SUM(expenses_value) + SUM(shipping_value) + SUM(safe_value) as total_total_accounting",
+                                "SUM(cofins_base) as total_total_cofins_base",
+                                "SUM(cofins_value) as total_total_cofins_value",
+                              )
+                              .collect {
+                                |cofins_total| { 
+                                  total_total_accounting: cofins_total.total_total_accounting,
+                                  total_total_cofins_base: cofins_total.total_total_cofins_base,
+                                  total_total_cofins_value: cofins_total.total_total_cofins_value,
+                                }
+                              }
+
+        render json: {cofins_products: @cofins_products, cofins_total: @cofins_total_values}
       end
 
     else
@@ -277,6 +306,9 @@ class CompaniesController < ApplicationController
                                   }
                               }
       render json: @cfop_products
+
+    else
+      render json: {status: 404}
     end
   end
 
