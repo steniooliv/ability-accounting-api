@@ -83,6 +83,6 @@ test:
 #
 production:
   <<: *default
-  database: ability_accounting_api_production
-  username: ability_accounting_api
-  password: <%= ENV['ABILITY_ACCOUNTING_API_DATABASE_PASSWORD'] %>
+  database: ability-accounting
+  username: ability
+  password: Rails.application.credentials.dig(:production, :db_password)
