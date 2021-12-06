@@ -35,7 +35,7 @@ class CompaniesController < ApplicationController
         @invoices = @invoices.where(type_movement: 'E')
         @invoice_products = InvoiceProduct.all.where(invoice_id: @invoices.ids)
         
-        @invoices = @invoices.order(date_departure: :asc, date_issue: :asc)
+        @invoices = @invoices.order(date_departure: :asc, date_issue: :asc, number: :asc)
 
         render json: {company: @current_company, invoices: @invoices.as_json(include: :customer), products: @invoice_products}
       end
@@ -46,7 +46,7 @@ class CompaniesController < ApplicationController
         @invoices = @invoices.where(type_movement: 'S')
         @invoice_products = InvoiceProduct.all.where(invoice_id: @invoices.ids)
 
-        @invoices = @invoices.order(date_issue: :asc, date_departure: :asc)
+        @invoices = @invoices.order(date_issue: :asc, date_departure: :asc, number: :asc)
 
         render json: {company: @current_company, invoices: @invoices.as_json(include: :customer), products: @invoice_products}
       end
@@ -57,7 +57,7 @@ class CompaniesController < ApplicationController
         @invoices = @invoices.where(type_movement: 'S')
         @invoice_products = InvoiceProduct.all.where(invoice_id: @invoices.ids)
 
-        @invoices = @invoices.order(date_issue: :asc, date_departure: :asc)
+        @invoices = @invoices.order(date_issue: :asc, date_departure: :asc, number: :asc)
 
         render json: {company: @current_company, invoices: @invoices.as_json(include: :customer), products: @invoice_products}
       end
